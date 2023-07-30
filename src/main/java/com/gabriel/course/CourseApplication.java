@@ -8,9 +8,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.gabriel.course.entities.Category;
 import com.gabriel.course.entities.Order;
 import com.gabriel.course.entities.User;
 import com.gabriel.course.entities.enums.OrderStatus;
+import com.gabriel.course.repositories.CategoryRepository;
 import com.gabriel.course.repositories.OrderRepository;
 import com.gabriel.course.repositories.UserRepository;
 
@@ -23,6 +25,9 @@ public class CourseApplication implements CommandLineRunner {
 	
 	@Autowired
 	private OrderRepository orderRepository;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CourseApplication.class, args);
@@ -30,6 +35,13 @@ public class CourseApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		
+		Category cat1 = new Category(null, "Electronics"); 
+		Category cat2 = new Category(null, "Books"); 
+		Category cat3 = new Category(null, "Computers"); 
+
+		categoryRepository.saveAll(Arrays.asList(cat1, cat2, cat3));
+		
 		User u1 = new User(null, "Gabriel", "gabriel@gmail.com", "(71)-984606034", "59710826");
 		User u2 = new User(null, "Luis", "Luis@gmail.com", "(71)-9993334414", "12345678");
 		
