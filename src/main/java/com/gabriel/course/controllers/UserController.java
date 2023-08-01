@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,19 +25,26 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping
-	public List<User> searchAll() {
-		return userService.findAll();
+	public ResponseEntity<List<User>> searchAll() {
+		return ResponseEntity.ok().body(userService.findAll());
 	}
 	
 	@GetMapping("/{id}")
-	public User searchById(@PathVariable Long id) {
-		return userService.findById(id);
+	public ResponseEntity<User> searchById(@PathVariable Long id) {
+		return ResponseEntity.ok().body(userService.findById(id));
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public User save(@RequestBody User user) {
-		return userService.save(user);
+	public ResponseEntity<User> save(@RequestBody User user) {
+		return ResponseEntity.ok().body(userService.save(user));
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> delete(@PathVariable Long id) {
+		userService.delete(id);
+		
+		return ResponseEntity.ok("Cliente excluido com sucesso!");
 	}
 	
 }
