@@ -47,15 +47,6 @@ public class User implements Serializable{
 		this.password = password;
 	}
 	
-	
-	/*public void saveOrder(Order order) {
-		orders.add(order);
-	}
-	
-	public void removeOrder(Order order) {
-		orders.add(order);
-	}*/
-
 	public List<Order> getOrders() {
 		return orders;
 	}
