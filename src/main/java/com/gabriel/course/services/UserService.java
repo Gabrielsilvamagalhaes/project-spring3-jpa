@@ -12,6 +12,8 @@ import com.gabriel.course.repositories.UserRepository;
 import com.gabriel.course.services.exceptions.DataBaseException;
 import com.gabriel.course.services.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserService {
 
@@ -46,9 +48,14 @@ public class UserService {
 	}
 	
 	public User update(Long id, User updatedUser) {
+		try {
 		User targetUser = userRepository.getReferenceById(id);
 		updateData(targetUser, updatedUser);
 		return userRepository.save(targetUser);
+		
+		}catch(EntityNotFoundException e) {
+			throw new  ResourceNotFoundException(id);
+		}
 	}
 
 	private void updateData(User targetUser, User updatedUser) {
