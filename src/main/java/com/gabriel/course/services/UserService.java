@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 
 import com.gabriel.course.entities.User;
 import com.gabriel.course.repositories.UserRepository;
+import com.gabriel.course.services.exceptions.DataBaseException;
 import com.gabriel.course.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -32,10 +33,16 @@ public class UserService {
 	}
 	
 	public void delete(Long id) {
+		try {
 		User user = userRepository.findById(id)
-		.orElseThrow(()-> new ResourceAccessException("Cliente não encontrado com o ID: " + id));
-		
+		.orElseThrow(()-> new ResourceNotFoundException(id));
 		userRepository.delete(user);
+		
+		}catch(DataIntegrityViolationException e) {
+			throw new DataBaseException(e.getMessage());
+			
+		}
+		
 	}
 	
 	public User update(Long id, User updatedUser) {
