@@ -9,6 +9,7 @@ import org.springframework.web.client.ResourceAccessException;
 
 import com.gabriel.course.entities.User;
 import com.gabriel.course.repositories.UserRepository;
+import com.gabriel.course.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class UserService {
@@ -23,7 +24,7 @@ public class UserService {
 	
 	public User findById(Long id) {
 		Optional<User> userOptional = userRepository.findById(id);
-		return userOptional.get();
+		return userOptional.orElseThrow(()-> new ResourceNotFoundException(id));
 	}
 
 	public User save(User user) {
