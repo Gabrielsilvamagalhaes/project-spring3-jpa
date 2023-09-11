@@ -1,9 +1,10 @@
 package com.gabriel.course.controllers;
 
-import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +14,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.gabriel.course.dtos.UserDTO;
 import com.gabriel.course.entities.User;
 import com.gabriel.course.services.UserService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/users")
@@ -26,8 +29,13 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping
-	public ResponseEntity<List<User>> searchAll() {
-		return ResponseEntity.ok().body(userService.findAll());
+	public ResponseEntity<List<UserDTO>> searchAll() {
+		List<User> lst = userService.findAll();
+		List<UserDTO> lstDTO = lst.stream()
+				.map(x -> new UserDTO(x.getName(), x.getEmail(), x.getPassword()))
+				.collect(Collectors.toList());
+		
+		return ResponseEntity.status(HttpStatus.OK).body(lstDTO);
 	}
 	
 	@GetMapping("/{id}")
@@ -36,14 +44,12 @@ public class UserController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<User> save(@RequestBody User user) {
-		User temporaryUser = userService.save(user);
+	public ResponseEntity<UserDTO> save(@RequestBody @Valid User user) {
+		var  userDTO = new UserDTO(user.getName(), user.getEmail(), user.getPhone());
+		userService.save(user);
 		
-		URI uri = ServletUriComponentsBuilder
-				.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(temporaryUser.getId()).toUri();
+		return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
 		
-		return ResponseEntity.created(uri).body(temporaryUser);
 	}
 	
 	@DeleteMapping("/{id}")
