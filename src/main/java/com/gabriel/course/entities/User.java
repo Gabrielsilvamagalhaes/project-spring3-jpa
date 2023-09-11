@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -22,10 +24,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @Entity
-@Table(name = "app_user")
-public class User implements Serializable{
+@Table(name = "person")
+public class User extends RepresentationModel<User> implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	

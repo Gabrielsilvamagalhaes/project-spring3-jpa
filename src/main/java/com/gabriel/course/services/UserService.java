@@ -21,6 +21,9 @@ public class UserService {
 	private UserRepository userRepository;
 
 	public List<User> findAll() {
+		if(userRepository.findAll().isEmpty()) {
+			throw new EntityNotFoundException("Not found users");
+		}
 		return userRepository.findAll();
 
 	}
@@ -49,7 +52,7 @@ public class UserService {
 	
 	public User update(Long id, User updatedUser) {
 		try {
-		User targetUser = userRepository.getReferenceById(id);
+		var targetUser = userRepository.getReferenceById(id);
 		updateData(targetUser, updatedUser);
 		return userRepository.save(targetUser);
 		

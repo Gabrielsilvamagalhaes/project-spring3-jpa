@@ -1,7 +1,6 @@
 package com.gabriel.course.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,9 @@ import com.gabriel.course.dtos.UserDTO;
 import com.gabriel.course.entities.User;
 import com.gabriel.course.services.UserService;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import jakarta.validation.Valid;
 
 @RestController
@@ -29,13 +31,14 @@ public class UserController {
 	private UserService userService;
 	
 	@GetMapping
-	public ResponseEntity<List<UserDTO>> searchAll() {
-		List<User> lst = userService.findAll();
-		List<UserDTO> lstDTO = lst.stream()
-				.map(x -> new UserDTO(x.getName(), x.getEmail(), x.getPassword()))
-				.collect(Collectors.toList());
+	public ResponseEntity<List<User>> searchAll() {
+		var <User> lst = userService.findAll();
 		
-		return ResponseEntity.status(HttpStatus.OK).body(lstDTO);
+		for(User user : lst) {
+			user.add(linkTo(methodOn(UserController.class).searchById(user.getId())).withSelfRel());
+		}
+		
+		return ResponseEntity.status(HttpStatus.OK).body(lst);
 	}
 	
 	@GetMapping("/{id}")
@@ -55,13 +58,13 @@ public class UserController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> delete(@PathVariable Long id) {
 		userService.delete(id);
-		
 		return ResponseEntity.ok("Cliente excluido com sucesso!");
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
-		return ResponseEntity.ok().body(userService.update(id, user));
+	public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody @Valid User user) {
+		var updatedUser = userService.update(id, user);
+		return ResponseEntity.ok().body(new UserDTO(updatedUser.getName(), updatedUser.getEmail(), updatedUser.getPhone()));
 	}
 	
 }
