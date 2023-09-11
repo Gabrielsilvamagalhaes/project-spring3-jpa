@@ -43,7 +43,10 @@ public class UserController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<User> searchById(@PathVariable Long id) {
-		return ResponseEntity.ok().body(userService.findById(id));
+		var user = userService.findById(id);
+		user.add(linkTo(methodOn(UserController.class).searchAll()).withRel("Users List"));
+		
+		return ResponseEntity.ok().body(user);
 	}
 	
 	@PostMapping

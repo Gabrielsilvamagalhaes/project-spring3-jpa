@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gabriel.course.entities.enums.OrderStatus;
 
@@ -25,7 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "app_order")
-public class Order implements Serializable {
+public class Order extends RepresentationModel<Order> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

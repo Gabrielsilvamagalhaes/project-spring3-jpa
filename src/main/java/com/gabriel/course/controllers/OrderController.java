@@ -1,15 +1,18 @@
 package com.gabriel.course.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabriel.course.entities.Order;
@@ -22,19 +25,28 @@ public class OrderController {
 	private OrderService orderService;
 	
 	@GetMapping
-	public List<Order> searchAll() {
-		return orderService.findAll();
+	public ResponseEntity<List<Order>> searchAll() {
+		var lst = orderService.findAll();
+		
+		for(Order o : lst) {
+			o.add(linkTo(methodOn(OrderController.class).searchById(o.getId())).withSelfRel());
+		}
+		
+		return ResponseEntity.ok().body(lst);
+		
 	}
 	
 	@GetMapping("/{id}")
-	public Order searchById(@PathVariable Long id) {
-		return orderService.findById(id);
+	public ResponseEntity<Order> searchById(@PathVariable Long id) {
+		var order = orderService.findById(id);
+		order.add(linkTo(methodOn(OrderController.class).searchAll()).withRel("Orders List"));
+		
+		return ResponseEntity.ok().body(order);
 	}
 	
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	public Order save(@RequestBody Order Order) {
-		return orderService.save(Order);
+	public ResponseEntity<Order> save(@RequestBody Order Order) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(orderService.save(Order));
 	}
 
 }

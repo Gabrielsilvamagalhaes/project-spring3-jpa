@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -19,7 +21,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "app_product")
-public class Product implements Serializable {
+public class Product extends RepresentationModel<Product> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
