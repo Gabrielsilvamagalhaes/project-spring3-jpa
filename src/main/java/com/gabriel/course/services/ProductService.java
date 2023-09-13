@@ -1,5 +1,6 @@
 package com.gabriel.course.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,10 +36,21 @@ public class ProductService {
 	public List<Product> findMaxPrice(double price) {
 		return productRepository.searchProductMaxPrice(price);
 	}
+	public List<Product> findMinPrice(double price) {
+		return productRepository.searchProductMinPrice(price);
+	}
+	
+	public List<Product> findByPriceBetween(BigDecimal minPrice, BigDecimal maxPrice) {
+		return productRepository.searchByPriceBetween(minPrice, maxPrice);
+	}
 	
 	public Product findById(Long id) {
 		Optional<Product> productOptional = productRepository.findById(id);
 		return productOptional.get();
+	}
+	
+	public List<Product> findByPriceAndCategory(BigDecimal minPrice, BigDecimal maxPrice, List<String> categoriesNames) {
+		return productRepository.searchProductByPriceAndCategory(minPrice, maxPrice, categoriesNames);
 	}
 
 	public Product save(Product product) {
