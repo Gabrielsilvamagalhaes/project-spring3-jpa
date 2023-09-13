@@ -28,6 +28,19 @@ public class UserService {
 
 	}
 	
+	public List<User> findByName(String name) {
+		try {
+			
+		if(userRepository.searchByNameIgnoreCase(name).isEmpty()) {
+			throw new EntityNotFoundException("Not found users");
+		}
+		
+		return userRepository.searchByNameIgnoreCase(name);
+		}catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(name);
+		}
+	}
+	
 	public User findById(Long id) {
 		Optional<User> userOptional = userRepository.findById(id);
 		return userOptional.orElseThrow(()-> new ResourceNotFoundException(id));

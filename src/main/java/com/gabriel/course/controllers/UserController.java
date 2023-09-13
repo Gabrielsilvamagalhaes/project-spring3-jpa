@@ -1,5 +1,8 @@
 package com.gabriel.course.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,19 +15,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabriel.course.dtos.UserDTO;
 import com.gabriel.course.entities.User;
 import com.gabriel.course.services.UserService;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 	
 	@Autowired
@@ -39,6 +40,11 @@ public class UserController {
 		}
 		
 		return ResponseEntity.status(HttpStatus.OK).body(lst);
+	}
+	
+	@GetMapping("/search-by-name")
+	public ResponseEntity<List<User>> searchByName(@RequestParam String name) {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.findByName(name));
 	}
 	
 	@GetMapping("/{id}")
